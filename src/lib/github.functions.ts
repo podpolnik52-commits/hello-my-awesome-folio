@@ -22,24 +22,48 @@ export interface GitHubProfile {
   updated_at: string;
 }
 
+export const FALLBACK_PROFILE: GitHubProfile = {
+  login: GITHUB_USERNAME,
+  id: 0,
+  avatar_url: `https://github.com/${GITHUB_USERNAME}.png`,
+  html_url: `https://github.com/${GITHUB_USERNAME}`,
+  name: null,
+  company: null,
+  blog: null,
+  location: null,
+  email: null,
+  bio: null,
+  twitter_username: null,
+  public_repos: 0,
+  public_gists: 0,
+  followers: 0,
+  following: 0,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
 export const getGitHubProfile = createServerFn({ method: "GET" }).handler(
   async (): Promise<GitHubProfile> => {
-    const response = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}`,
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          "User-Agent": "portfolio-site",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+    try {
+      const response = await fetch(
+        `https://api.github.com/users/${GITHUB_USERNAME}`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "User-Agent": "portfolio-site",
+          },
+        }
       );
-    }
 
-    return response.json();
+      if (!response.ok) {
+        console.error(`GitHub API error: ${response.status}`);
+        return FALLBACK_PROFILE;
+      }
+
+      return (await response.json()) as GitHubProfile;
+    } catch (error) {
+      console.error("GitHub API request failed:", error);
+      return FALLBACK_PROFILE;
+    }
   }
 );
