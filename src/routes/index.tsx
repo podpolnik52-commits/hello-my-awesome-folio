@@ -1,12 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Github, ExternalLink, Terminal, Cpu } from "lucide-react";
+import {
+  Github,
+  ExternalLink,
+  Terminal,
+  Cpu,
+  User,
+  BookOpen,
+  Target,
+  Mail,
+  Rocket,
+  Sparkles,
+} from "lucide-react";
 
 import { FALLBACK_PROFILE, getGitHubProfile } from "@/lib/github.functions";
 
 const DISPLAY_NAME = "Павел Синевич";
 const DISPLAY_TITLE = "Начинающий веб-разработчик";
+
 const DISPLAY_BIO =
-  "Я только начинаю свой путь в разработке. Сейчас активно изучаю веб-технологии, практикуюсь в создании интерфейсов и набираюсь опыта в небольших проектах. Открыт к новым знаниям и первым задачам в IT."
+  "Я только начинаю свой путь в веб-разработке. Мне интересно создавать сайты и приложения, которые решают реальные задачи. Сейчас активно учусь, практикуюсь в вёрстке и логике интерфейсов, и открыт к первым задачам в IT.";
+
+const ABOUT_TEXT =
+  "Меня зовут Павел, и я — начинающий разработчик из Минска. Путь в IT начался с любопытства: хотелось понимать, как устроены сайты и приложения, которыми пользуемся каждый день. Со временем интерес перерос в желание делать такие продукты самому.";
+
+const JOURNEY_TEXT =
+  "Начинал с основ HTML, CSS и JavaScript. Постепенно углубился в React, TypeScript и современные подходы к разработке интерфейсов. Каждый новый проект — это повод разобраться в чём-то незнакомом и приблизиться к уровню middle-разработчика.";
+
+const GOALS_TEXT =
+  "В ближайший год хочу освоить полноценный стек для создания веб-приложений, собрать несколько сильных проектов в портфолио и найти первую работу в команде, где можно расти под руководством опытных разработчиков.";
+
+const LEARNING_NOW = [
+  "React и экосистема",
+  "TypeScript",
+  "Алгоритмы и структуры данных",
+  "Работа с API и асинхронностью",
+  "Адаптивная вёрстка",
+];
 
 const SKILLS = [
   "JavaScript",
@@ -34,13 +63,16 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Личное портфолио разработчика Павла Синевича. Обо мне, навыки и профиль GitHub.",
+          "Личное портфолио начинающего разработчика Павла Синевича. Обо мне, мой путь, навыки, цели и профиль GitHub.",
       },
-      { property: "og:title", content: `${DISPLAY_NAME} — Портфолио разработчика` },
+      {
+        property: "og:title",
+        content: `${DISPLAY_NAME} — Портфолио разработчика`,
+      },
       {
         property: "og:description",
         content:
-          "Личное портфолио разработчика Павла Синевича. Обо мне, навыки и профиль GitHub.",
+          "Личное портфолио начинающего разработчика Павла Синевича. Обо мне, мой путь, навыки, цели и профиль GitHub.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -91,7 +123,7 @@ function Index() {
         </a>
       </header>
 
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-16 md:px-12">
+      <main className="relative z-10 flex flex-1 flex-col px-6 py-16 md:px-12">
         <section className="mx-auto w-full max-w-4xl text-center">
           <div className="mx-auto mb-8 inline-block">
             <div className="relative">
@@ -118,18 +150,66 @@ function Index() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
             <Stat
-              label={plural(profile.public_repos, "репозиторий", "репозитория", "репозиториев")}
+              label={plural(
+                profile.public_repos,
+                "репозиторий",
+                "репозитория",
+                "репозиториев"
+              )}
               value={profile.public_repos}
             />
             <Stat
-              label={plural(profile.followers, "подписчик", "подписчика", "подписчиков")}
+              label={plural(
+                profile.followers,
+                "подписчик",
+                "подписчика",
+                "подписчиков"
+              )}
               value={profile.followers}
             />
             <Stat
-              label={plural(profile.following, "подписка", "подписки", "подписок")}
+              label={plural(
+                profile.following,
+                "подписка",
+                "подписки",
+                "подписок"
+              )}
               value={profile.following}
             />
             <Stat label={`на GitHub с ${joinDate}`} value="" />
+          </div>
+        </section>
+
+        <section className="mx-auto mt-24 w-full max-w-5xl">
+          <div className="mb-10 flex items-center gap-3">
+            <User className="h-5 w-5 text-primary" />
+            <h2 className="font-mono text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+              Обо мне
+            </h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <InfoCard
+              icon={<BookOpen className="h-5 w-5" />}
+              title="Кто я"
+              text={ABOUT_TEXT}
+            />
+            <InfoCard
+              icon={<Rocket className="h-5 w-5" />}
+              title="Мой путь"
+              text={JOURNEY_TEXT}
+            />
+            <InfoCard
+              icon={<Target className="h-5 w-5" />}
+              title="Цели"
+              text={GOALS_TEXT}
+            />
+            <InfoCard
+              icon={<Sparkles className="h-5 w-5" />}
+              title="Сейчас изучаю"
+              text=""
+              tags={LEARNING_NOW}
+            />
           </div>
         </section>
 
@@ -147,6 +227,32 @@ function Index() {
             ))}
           </div>
         </section>
+
+        <section className="mx-auto mt-24 w-full max-w-5xl">
+          <div className="mb-10 flex items-center gap-3">
+            <Mail className="h-5 w-5 text-primary" />
+            <h2 className="font-mono text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+              Связаться со мной
+            </h2>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card/50 p-8 text-center backdrop-blur-sm">
+            <p className="mx-auto max-w-xl text-muted-foreground">
+              Открыт к первым проектам, стажировкам и просто общению по теме
+              разработки. Напишите — обсудим идеи или задачи.
+            </p>
+            <a
+              href={profile.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium transition-all hover:border-primary hover:text-primary"
+            >
+              <Github className="h-4 w-4" />
+              Написать через GitHub
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
+          </div>
+        </section>
       </main>
 
       <footer className="relative z-10 border-t border-border px-6 py-8 text-center text-sm text-muted-foreground md:px-12">
@@ -157,7 +263,8 @@ function Index() {
           <span className="text-primary">Tailwind</span>
         </p>
         <p className="mt-2">
-          &copy; {new Date().getFullYear()} {DISPLAY_NAME}. Все права защищены.
+          &copy; {new Date().getFullYear()} {DISPLAY_NAME}. Все права
+          защищены.
         </p>
       </footer>
     </div>
@@ -171,6 +278,44 @@ function Stat({ label, value }: { label: string; value: string | number }) {
         <span className="font-mono font-semibold text-foreground">{value}</span>
       )}
       <span className="text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
+function InfoCard({
+  icon,
+  title,
+  text,
+  tags,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+  tags?: string[];
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/60 hover:bg-card">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          {icon}
+        </div>
+        <h3 className="font-mono text-xl font-semibold text-foreground">
+          {title}
+        </h3>
+      </div>
+      {text && <p className="leading-relaxed text-muted-foreground">{text}</p>}
+      {tags && (
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-border bg-background px-3 py-1 text-sm text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
