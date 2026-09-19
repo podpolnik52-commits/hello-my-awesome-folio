@@ -167,7 +167,9 @@ function Index() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex items-center gap-2 rounded-full border border-border bg-card/50 px-4 py-2 backdrop-blur-sm">
-      <span className="font-mono font-semibold text-foreground">{value}</span>
+      {value !== "" && (
+        <span className="font-mono font-semibold text-foreground">{value}</span>
+      )}
       <span className="text-muted-foreground">{label}</span>
     </div>
   );
