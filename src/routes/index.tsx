@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Github, ExternalLink, Terminal, Code2, Cpu } from "lucide-react";
+import { Github, ExternalLink, Terminal, Cpu } from "lucide-react";
 
 import { getGitHubProfile } from "@/lib/github.functions";
 
