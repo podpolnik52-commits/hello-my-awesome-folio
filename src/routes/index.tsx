@@ -1,24 +1,184 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Github, ExternalLink, Terminal, Code2, Cpu } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { getGitHubProfile } from "@/lib/github.functions";
+
+const DISPLAY_NAME = "Pavel Sinevich";
+const DISPLAY_TITLE = "Software Developer";
+const DISPLAY_BIO =
+  "Building things for the web. Passionate about clean code, open source, and continuous learning.";
+
+const SKILLS = [
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Node.js",
+  "Git",
+  "HTML/CSS",
+  "Tailwind CSS",
+  "Python",
+];
+
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const profile = await getGitHubProfile();
+    return { profile };
+  },
+  head: () => ({
+    meta: [
+      { title: `${DISPLAY_NAME} — Developer Portfolio` },
+      {
+        name: "description",
+        content:
+          "Personal developer portfolio of Pavel Sinevich. About, skills, and GitHub profile.",
+      },
+      { property: "og:title", content: `${DISPLAY_NAME} — Developer Portfolio` },
+      {
+        property: "og:description",
+        content:
+          "Personal developer portfolio of Pavel Sinevich. About, skills, and GitHub profile.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const { profile } = Route.useLoaderData();
+
+  const joinDate = new Date(profile.created_at).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
+      <GridBackground />
+
+      <header className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12">
+        <Link
+          to="/"
+          className="font-mono text-sm font-semibold tracking-tight text-foreground hover:text-primary transition-colors"
+        >
+          &lt;{profile.login} /&gt;
+        </Link>
+        <a
+          href={profile.html_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-4 py-2 text-sm font-medium text-card-foreground backdrop-blur-sm transition-all hover:border-primary hover:text-primary"
+        >
+          <Github className="h-4 w-4" />
+          <span className="hidden sm:inline">GitHub</span>
+          <ExternalLink className="h-3 w-3 opacity-60" />
+        </a>
+      </header>
+
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-16 md:px-12">
+        <section className="mx-auto w-full max-w-4xl text-center">
+          <div className="mx-auto mb-8 inline-block">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary to-secondary blur-md opacity-60" />
+              <img
+                src={profile.avatar_url}
+                alt={DISPLAY_NAME}
+                className="relative h-28 w-28 rounded-full border-2 border-border bg-card object-cover md:h-36 md:w-36"
+              />
+            </div>
+          </div>
+
+          <h1 className="font-mono text-4xl font-bold tracking-tight text-foreground md:text-6xl">
+            {DISPLAY_NAME}
+          </h1>
+
+          <p className="mt-4 font-mono text-lg text-primary md:text-xl">
+            {DISPLAY_TITLE}
+          </p>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            {profile.bio ?? DISPLAY_BIO}
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Stat label="public repos" value={profile.public_repos} />
+            <Stat label="followers" value={profile.followers} />
+            <Stat label="following" value={profile.following} />
+            <Stat label="joined" value={joinDate} />
+          </div>
+        </section>
+
+        <section className="mx-auto mt-24 w-full max-w-5xl">
+          <div className="mb-10 flex items-center gap-3">
+            <Terminal className="h-5 w-5 text-primary" />
+            <h2 className="font-mono text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+              Skills & Stack
+            </h2>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SKILLS.map((skill) => (
+              <SkillCard key={skill} name={skill} />
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer className="relative z-10 border-t border-border px-6 py-8 text-center text-sm text-muted-foreground md:px-12">
+        <p>
+          Built with{" "}
+          <span className="text-primary">React</span> +{" "}
+          <span className="text-primary">TanStack</span> +{" "}
+          <span className="text-primary">Tailwind</span>
+        </p>
+        <p className="mt-2">
+          &copy; {new Date().getFullYear()} {DISPLAY_NAME}. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex items-center gap-2 rounded-full border border-border bg-card/50 px-4 py-2 backdrop-blur-sm">
+      <span className="font-mono font-semibold text-foreground">{value}</span>
+      <span className="text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
+function SkillCard({ name }: { name: string }) {
+  return (
+    <div className="group relative overflow-hidden rounded-xl border border-border bg-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/60 hover:bg-card">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="relative flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Cpu className="h-5 w-5" />
+        </div>
+        <span className="font-mono text-lg font-medium text-foreground">
+          {name}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function GridBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0">
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
       />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
     </div>
   );
 }
