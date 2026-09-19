@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Github, ExternalLink, Terminal, Cpu } from "lucide-react";
 
-import { getGitHubProfile } from "@/lib/github.functions";
+import { FALLBACK_PROFILE, getGitHubProfile } from "@/lib/github.functions";
 
-const DISPLAY_NAME = "Pavel Sinevich";
-const DISPLAY_TITLE = "Software Developer";
+const DISPLAY_NAME = "Павел Синевич";
+const DISPLAY_TITLE = "Разработчик";
 const DISPLAY_BIO =
-  "Building things for the web. Passionate about clean code, open source, and continuous learning.";
+  "Создаю проекты для веба. Увлекаюсь чистым кодом, открытым исходным кодом и постоянным обучением.";
 
 const SKILLS = [
   "JavaScript",
@@ -21,22 +21,26 @@ const SKILLS = [
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const profile = await getGitHubProfile();
-    return { profile };
+    try {
+      const profile = await getGitHubProfile();
+      return { profile: profile ?? FALLBACK_PROFILE };
+    } catch {
+      return { profile: FALLBACK_PROFILE };
+    }
   },
   head: () => ({
     meta: [
-      { title: `${DISPLAY_NAME} — Developer Portfolio` },
+      { title: `${DISPLAY_NAME} — Портфолио разработчика` },
       {
         name: "description",
         content:
-          "Personal developer portfolio of Pavel Sinevich. About, skills, and GitHub profile.",
+          "Личное портфолио разработчика Павла Синевича. Обо мне, навыки и профиль GitHub.",
       },
-      { property: "og:title", content: `${DISPLAY_NAME} — Developer Portfolio` },
+      { property: "og:title", content: `${DISPLAY_NAME} — Портфолио разработчика` },
       {
         property: "og:description",
         content:
-          "Personal developer portfolio of Pavel Sinevich. About, skills, and GitHub profile.",
+          "Личное портфолио разработчика Павла Синевича. Обо мне, навыки и профиль GitHub.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -48,9 +52,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { profile } = Route.useLoaderData();
+  const data = Route.useLoaderData();
+  const profile = data?.profile ?? FALLBACK_PROFILE;
 
-  const joinDate = new Date(profile.created_at).toLocaleDateString("en-US", {
+  const joinDate = new Date(profile.created_at).toLocaleDateString("ru-RU", {
     month: "short",
     year: "numeric",
   });
@@ -104,10 +109,10 @@ function Index() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-            <Stat label="public repos" value={profile.public_repos} />
-            <Stat label="followers" value={profile.followers} />
-            <Stat label="following" value={profile.following} />
-            <Stat label="joined" value={joinDate} />
+            <Stat label="репозиториев" value={profile.public_repos} />
+            <Stat label="подписчиков" value={profile.followers} />
+            <Stat label="подписок" value={profile.following} />
+            <Stat label="на GitHub с" value={joinDate} />
           </div>
         </section>
 
@@ -115,7 +120,7 @@ function Index() {
           <div className="mb-10 flex items-center gap-3">
             <Terminal className="h-5 w-5 text-primary" />
             <h2 className="font-mono text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-              Skills & Stack
+              Навыки и стек
             </h2>
           </div>
 
@@ -129,13 +134,13 @@ function Index() {
 
       <footer className="relative z-10 border-t border-border px-6 py-8 text-center text-sm text-muted-foreground md:px-12">
         <p>
-          Built with{" "}
+          Создано на{" "}
           <span className="text-primary">React</span> +{" "}
           <span className="text-primary">TanStack</span> +{" "}
           <span className="text-primary">Tailwind</span>
         </p>
         <p className="mt-2">
-          &copy; {new Date().getFullYear()} {DISPLAY_NAME}. All rights reserved.
+          &copy; {new Date().getFullYear()} {DISPLAY_NAME}. Все права защищены.
         </p>
       </footer>
     </div>
