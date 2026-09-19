@@ -51,14 +51,22 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function plural(n: number, one: string, few: string, many: string): string {
+  const mod100 = Math.abs(n) % 100;
+  const mod10 = mod100 % 10;
+  if (mod100 >= 11 && mod100 <= 14) return many;
+  if (mod10 === 1) return one;
+  if (mod10 >= 2 && mod10 <= 4) return few;
+  return many;
+}
+
 function Index() {
   const data = Route.useLoaderData();
   const profile = data?.profile ?? FALLBACK_PROFILE;
 
-  const joinDate = new Date(profile.created_at).toLocaleDateString("ru-RU", {
-    month: "short",
-    year: "numeric",
-  });
+  const joinDate = new Date(profile.created_at)
+    .toLocaleDateString("ru-RU", { month: "long", year: "numeric" })
+    .replace(" г.", "");
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
@@ -109,10 +117,19 @@ function Index() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-            <Stat label="репозиториев" value={profile.public_repos} />
-            <Stat label="подписчиков" value={profile.followers} />
-            <Stat label="подписок" value={profile.following} />
-            <Stat label="на GitHub с" value={joinDate} />
+            <Stat
+              label={plural(profile.public_repos, "репозиторий", "репозитория", "репозиториев")}
+              value={profile.public_repos}
+            />
+            <Stat
+              label={plural(profile.followers, "подписчик", "подписчика", "подписчиков")}
+              value={profile.followers}
+            />
+            <Stat
+              label={plural(profile.following, "подписка", "подписки", "подписок")}
+              value={profile.following}
+            />
+            <Stat label={`на GitHub с ${joinDate}`} value="" />
           </div>
         </section>
 
