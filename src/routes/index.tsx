@@ -4,9 +4,9 @@ import { Github, ExternalLink, Terminal, Cpu } from "lucide-react";
 import { FALLBACK_PROFILE, getGitHubProfile } from "@/lib/github.functions";
 
 const DISPLAY_NAME = "Павел Синевич";
-const DISPLAY_TITLE = "Разработчик";
+const DISPLAY_TITLE = "Начинающий веб-разработчик";
 const DISPLAY_BIO =
-  "Создаю проекты для веба. Увлекаюсь чистым кодом, открытым исходным кодом и постоянным обучением.";
+  "Я только начинаю свой путь в разработке. Сейчас активно изучаю веб-технологии, практикуюсь в создании интерфейсов и набираюсь опыта в небольших проектах. Открыт к новым знаниям и первым задачам в IT."
 
 const SKILLS = [
   "JavaScript",
